@@ -286,3 +286,19 @@ PUT
 localhost:8081/api/passengers/60ac9e425445b13080d02012
 POST
 localhost:8081/api/register
+
+
+
+Day 2::
+1) Pick up one microservice 
+I have pick up passenger microservice.
+
+2)start with creating service
+I have created Rest API for the passenger microservice
+
+3) Start performing CRUD operations
+
+I have started with CRUD operations 
+i Have created Post request, get request, put request, delete request.
+ and try to call from postman and its working.
+ 
