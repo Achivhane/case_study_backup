@@ -4,7 +4,7 @@ var bodyParser= require("body-parser");
 var mongoose   = require('mongoose');
 // connect to our database
 mongoose.connect('mongodb+srv://admin:admin@cluster0.d36b8.mongodb.net/asd?retryWrites=true&w=majority',{ useNewUrlParser: true, useUnifiedTopology: true,useCreateIndex:true }); 
-var Passenger = require('../database/model/passenger');
+var Passenger = require('../model/passenger');
 //var Register = require('../database/model/register');
 //var Login = require('../database/model/login');
 //const passenger = require('../database/model/passenger');
@@ -135,4 +135,4 @@ router.delete('/passengers/:_id', function(req, res) {
 
 app.use('/api', router);
 app.listen(port);
-console.log('Magic happens on port ' + port);
+console.log('server listening on port ' + port);

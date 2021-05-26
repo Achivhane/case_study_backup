@@ -292,13 +292,17 @@ localhost:8081/api/register
 Day 2::
 1) Pick up one microservice 
 I have pick up passenger microservice.
+I have pick up another admin microservice.
+I have picked up booking microservice.
+I have picked up payment microservice. 
 
 2)start with creating service
-I have created Rest API for the passenger microservice
+I have created Rest API for the passenger microservice. Also I have created rest api for the booking, admin, payment microservice.
 
 3) Start performing CRUD operations
 
 I have started with CRUD operations 
 i Have created Post request, get request, put request, delete request.
- and try to call from postman and its working.
+ and try to call from postman and its working on all the microservices.
+
  
