@@ -21,10 +21,10 @@ var BookingSchema = new Schema({
         type:String
     },
     booking_date:{
-        type:Date
+        type:String
     },
     book:{
-        type:Boolean
+        type:String
     }
 })
 

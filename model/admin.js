@@ -27,7 +27,7 @@ var AdminSchema = new Schema({
         type:String
     },
     available:{
-        type:Boolean
+        type:String
     }
 })
 

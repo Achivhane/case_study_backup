@@ -19,7 +19,8 @@ var PassengerSchema = new Schema({
     },
     phone:{
         type:Number,
-        unique:true
+        unique:true,
+        minlengh:10
     },
     age:{
         type:Number,

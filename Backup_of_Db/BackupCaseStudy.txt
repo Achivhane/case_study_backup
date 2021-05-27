@@ -57,8 +57,24 @@ var PassengerSchema = new Schema({
 
 module.exports = mongoose.model('Passenger', PassengerSchema);
 ********************************************************
+
+passengerRouter.js
+
 there are two methods like register and login method:
 a. Register: adding the data to bd:
+var express = require('express');
+var router = express.Router();
+const Passenger = require('../model/passenger');
+
+//get request
+router.get('/passengers',function(req, res) {
+    Passenger.find(function(err, passenger) {
+        if (err)
+            res.send(err);
+
+        res.json(passenger);
+    });
+});
 
 //post request for register
 router.post('/register',(req, res)=>{
@@ -84,18 +100,6 @@ router.post('/register',(req, res)=>{
         res.send('new passenger is added to the database');
     }
 });
-});
-
-To get the all details of the passenger 
-
- 
-router.get('/passengers',function(req, res) {
-    Passenger.find(function(err, passenger) {
-        if (err)
-            res.send(err);
-
-        res.json(passenger);
-    });
 });
 
 b. Login : when we login it add the data to db
@@ -117,98 +121,7 @@ router.post("/login",(req, res)=>{
                 res.send('new passenger is added to the database');
             }
         });
-FILE_NAME: server.js
 
-var express    = require('express');
-var app        = express();
-var bodyParser= require("body-parser");
-var mongoose   = require('mongoose');
-// connect to our database
-mongoose.connect('mongodb+srv://admin:admin@cluster0.d36b8.mongodb.net/asd?retryWrites=true&w=majority',{ useNewUrlParser: true, useUnifiedTopology: true,useCreateIndex:true }); 
-var Passenger = require('../database/model/passenger');
-var Register = require('../database/model/register');
-var Login = require('../database/model/login');
-//const passenger = require('../database/model/passenger');
-
-
-app.use(bodyParser.urlencoded({ extended: true}));
-app.use(bodyParser.json());
-var port = process.env.PORT || 8081;        // set our port
-var router = express.Router();
- router.use(function(req, res, next) {
-     // do logging
-     console.log('Something is happening.');
-     next(); // make sure we go to the next routes and don't stop here
-});
-//get request
- 
-router.get('/passengers',function(req, res) {
-    Passenger.find(function(err, passenger) {
-        if (err)
-            res.send(err);
-
-        res.json(passenger);
-    });
-});
-
-//post request for register
-
-router.post('/register',(req, res)=>{
-    var reg=new Passenger();
-    reg.name=req.body.name;
-    reg.email=req.body.email;
-    reg.password=req.body.password;
-    reg.phone=req.body.phone;
-    reg.age=req.body.age;
-    console.log("inside reg post");
-    // Output the book to the console for debugging
-    console.log(reg);
-   // Passenger.push(register);
-   reg.save(function(err) {
-    if (err)
-    {
-        console.log("testing rest1");
-        res.send(err);
-    }
-    else
-    {
-        console.log("no issue");
-        res.send('new passenger is added to the database');
-    }
-});
-});
-//post request for login
-router.post("/login",(req, res)=>{
-    var login = Passenger();
-    const body=req.body
-    const email=body.email
-    const password = body.password
-    login.save(function(err) {
-            if (err)
-            {
-                console.log("testing rest1");
-                res.send(err);
-            }
-            else
-            {
-                console.log("no issue");
-                res.send('new passenger is added to the database');
-            }
-        });
-
-//if passenger details found or not found
- Passenger.findOne({email:email,password:password},(err,found)=>{
-      if(found){
-          console.log("success");
-          console.log(found);
-         res.json("successful");
-     }
-     else{
-         console.log("unauthorized");
-         res.json("unauthorized");
-     }
- });    
-});
 //put request
 
 router.put('/passengers/:_id', function(req, res) {
@@ -234,7 +147,6 @@ router.put('/passengers/:_id', function(req, res) {
     }
 	});
 });
-
 //delete request
 
 router.delete('/passengers/:_id', function(req, res) {
@@ -253,6 +165,37 @@ router.delete('/passengers/:_id', function(req, res) {
         }
 	});
 });
+
+module.exports = router;
+
+main file: Server.js
+
+var express    = require('express');
+var app        = express();
+var bodyParser= require("body-parser");
+var mongoose   = require('mongoose');
+// connect to our database
+mongoose.connect('mongodb+srv://admin:admin@cluster0.d36b8.mongodb.net/asd?retryWrites=true&w=majority',{ useNewUrlParser: true, useUnifiedTopology: true,useCreateIndex:true }); 
+
+const passenger = require('./Router/passengerRouter')
+const admin = require('./Router/adminRouter')
+const booking = require('./Router/bookingRouter')
+const payment = require('./Router/paymentRouter')
+
+app.use(passenger);
+app.use(admin); 
+app.use(booking);
+app.use(payment);
+
+app.use(bodyParser.urlencoded({ extended: true}));
+app.use(bodyParser.json());
+var port = process.env.PORT || 8081;        // set our port
+
+ app.use(function(req, res, next) {
+     // do logging
+     console.log('Something is happening.');
+     next(); // make sure we go to the next routes and don't stop here
+});
 app.use('/api', router);
 app.listen(port);
 console.log('Magic happens on port ' + port);
@@ -261,16 +204,270 @@ console.log('Magic happens on port ' + port);
 2)Database name:Train_Details
    Model Name:Trains
 
+   admin.js 
+
+   //    Admin Rest API
+
+const express = require('express');
+const mongoose = require('mongoose');
+
+//create schema
+var Schema = mongoose.Schema;
+var AdminSchema = new Schema({
+    // passenger:{type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Passenger"},
+    train_name:{
+        type: String
+    },
+    from:{
+        type:String
+    },
+    to:{
+        type:String
+    },
+    fare:{
+        type:Number
+    },
+    arrival_time:{
+        type:String
+    },
+    departure_time:{
+        type:String
+    },
+    available:{
+        type:String
+    }
+})
+
+module.exports = mongoose.model('Admin', AdminSchema);
+
+adminRouter.js
+
+var express = require('express');
+var router = express.Router();
+var Admin = require('../model/admin');
+
+
+// get request for trains details
+router.get('/TrainDetails',function(req, res) {
+    Admin.find(function(err, details) {
+        if (err)
+            res.send(err);
+
+        res.json(details);
+    });
+});
+
+//post request for register data
+router.post('/admin',(req, res)=>{
+    var admin=new Admin();
+    admin.train_name=req.body.train_name;
+    admin.from=req.body.from;
+    admin.to=req.body.to;
+    admin.fare=req.body.fare;
+    admin.arrival_time=req.body.arrival_time;
+    admin.departure_time=req.body.departure_time;
+    admin.available=req.body.available;
+    console.log("inside admin post");
+    // Output the book to the console for debugging
+    console.log(admin);
+   // Passenger.push(register);
+   admin.save(function(err) {
+    if (err)
+    {
+        console.log("testing rest1");
+        res.send(err);
+    }
+    else
+    {
+        console.log("no issue");
+        res.send('new train detail is added to the database');
+    }
+});
+});
+
+module.exports = router;
+
 3)Database name:Booking_Details
    Model Name:Booking
+
+   booking.js
+
+   //       Booking Rest API
+
+const express = require('express');
+const mongoose = require('mongoose');
+
+//create schema
+var Schema = mongoose.Schema;
+var BookingSchema = new Schema({
+    // passenger:{type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Passenger"},
+    train_name:{
+        type: String
+    },
+    number_of_seats:{
+        type: Number
+    },
+    from:{
+        type:String
+    },
+    to:{
+        type:String
+    },
+    booking_date:{
+        type:String
+    },
+    book:{
+        type:String
+    }
+})
+
+module.exports = mongoose.model('Booking', BookingSchema);
+
+bookingRouter.js
+
+var express = require('express');
+const Booking = require('../model/booking');
+var router = express.Router();
+
+//get request
+ 
+router.get('/booking',function(req, res) {
+    Booking.find(function(err, booking) {
+        if (err)
+            res.send(err);
+
+        res.json(booking);
+    });
+});
+
+//post request for register data
+router.post('/booking',(req, res)=>{
+    var reg=new Booking();
+    reg.train_name=req.body.train_name;
+    reg.number_of_seats=req.body.number_of_seats;
+    reg.from=req.body.from;
+    reg.to=req.body.to;
+    reg.booking_date=req.body.booking_date;
+    reg.book=req.body.book;
+    console.log("inside reg post");
+    // Output the book to the console for debugging
+    console.log(reg);
+   // Passenger.push(register);
+   reg.save(function(err) {
+    if (err)
+    {
+        console.log("testing rest1");
+        res.send(err);
+    }
+    else
+    {
+        console.log("no issue");
+        res.send('new passenger is added to the database');
+    }
+});
+});
+
+module.exports = router;
 
 4)Database name:Payment_Details
    Model Name:Payment
 
+payment.js
+
+//                      payment Rest API
+
+const express = require('express');
+const mongoose = require('mongoose');
+
+//create schema
+var Schema = mongoose.Schema;
+var PaymentSchema = new Schema({
+    fare:{
+        type: Number
+    },
+    passenger_id:{
+        type: Number,    
+    }
+})
+module.exports = mongoose.model('Payment', PaymentSchema);
+
+paymentRouter.js
+
+var express = require('express');
+const Payment = require('../model/payment');
+var router = express.Router();
+
+//get request
+ 
+router.get('/PaymentDetails',function(req, res) {
+    Payment.find(function(err, details) {
+        if (err)
+            res.send(err);
+
+        res.json(details);
+    });
+});
+
+//post request for register data
+router.post('/payment',(req, res)=>{
+    var pay=new Payment();
+    pay.fare=req.body.fare;
+    pay.passenger_id=req.body.passenger_id;
+    console.log("inside admin post");
+    // Output the book to the console for debugging
+    console.log(pay);
+   // Passenger.push(register);
+   pay.save(function(err) {
+    if (err)
+    {
+        res.send("payment not Successful");
+    
+    }
+    else
+    {
+       
+        res.send('Payment Successful');
+    }
+});
+});
+
+module.exports = router;
+
 3)setting up your node server.::
 
+server.js 
 
+var express = require('express');
+var app = express();
+var bodyParser= require("body-parser");
+var mongoose = require('mongoose');
+// connect to our database
+mongoose.connect('mongodb+srv://admin:admin@cluster0.d36b8.mongodb.net/RailWays?retryWrites=true&w=majority',{ useNewUrlParser: true, useUnifiedTopology: true,useCreateIndex:true }); 
+app.use(express.json());
 
+// app.use(bodyParser.urlencoded({ extended: true}));
+// app.use(bodyParser.json());
+
+const passenger = require('./Router/passengerRouter')
+const admin = require('./Router/adminRouter')
+const booking = require('./Router/bookingRouter')
+const payment = require('./Router/paymentRouter')
+
+app.use(passenger);
+app.use(admin); 
+app.use(booking);
+app.use(payment);
+
+app.use(function(req, res, next) {
+    // do logging
+    console.log('Something is happening.');
+    next(); // make sure we go to the next routes and don't stop here
+});
+var port = process.env.PORT || 8080; 
+app.listen(port);
+console.log('Server Listening on port ' + port);
 
 4)setting up the gateways calls for each server
 
